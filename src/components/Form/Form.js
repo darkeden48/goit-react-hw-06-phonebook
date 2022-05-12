@@ -1,14 +1,25 @@
 import { useState } from "react";
 import form from "./Form.module.css";
 import { nanoid } from "nanoid";
+import { useSelector, useDispatch } from "react-redux";
+import {addContact, removeContact} from "../../redux/store"
 
-export default function Form({ onSubmit }) {
+export default function Form() {
+  const contacts = useSelector(state=>state.contacts);
+  console.log(contacts.name)
+  const dispatch = useDispatch();
+  
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
 
   const nameId = nanoid();
   const numberId = nanoid();
 
+  const contact = {
+    id: nanoid(),
+    name,
+    number
+}
   const handleChange = (event) => {
     const { name, value } = event.target;
     // setName({ [event.currentTarget.name]: event.currentTarget.value });
@@ -23,13 +34,18 @@ export default function Form({ onSubmit }) {
         return;
     }
   };
-
+console.log(contact.name)
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(name, number);
+    dispatch(addContact(contact));
+    const inContact=contacts.map(el=>el.name===contact.name);
+    if (inContact) {
+          alert(contact.name + " is already in contacts");
+          return;
+    
     reset();
   };
-
+  }
   const reset = (e) => {
     setName("");
     setNumber("");

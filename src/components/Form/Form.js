@@ -1,12 +1,12 @@
+import PropTypes from 'prop-types';
 import { useState } from "react";
 import form from "./Form.module.css";
 import { nanoid } from "nanoid";
 import { useSelector, useDispatch } from "react-redux";
-import {addContact, removeContact} from "../../redux/store"
+import {addContact} from "../../redux/actions"
 
 export default function Form() {
-  const contacts = useSelector(state=>state.contacts);
-  console.log(contacts.name)
+  const contacts = useSelector(state=>state.contacts.contacts);
   const dispatch = useDispatch();
   
   const [name, setName] = useState("");
@@ -20,9 +20,9 @@ export default function Form() {
     name,
     number
 }
+ 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    // setName({ [event.currentTarget.name]: event.currentTarget.value });
     switch (name) {
       case "name":
         setName(value);
@@ -34,23 +34,23 @@ export default function Form() {
         return;
     }
   };
-console.log(contact.name)
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addContact(contact));
-    const inContact=contacts.map(el=>el.name===contact.name);
-    if (inContact) {
-          alert(contact.name + " is already in contacts");
-          return;
-    
     reset();
-  };
-  }
+    const inContact=contacts.find(el=>el.name===contact.name);
+        if(inContact){     
+          alert(contact.name + " is already in contacts");
+              return;
+        }
+        dispatch(addContact(contact)); 
+  };    
+  
   const reset = (e) => {
-    setName("");
-    setNumber("");
-  };
-
+      setName("");
+      setNumber("");
+    };
+  
   return (
     <form className={form.form} onSubmit={handleSubmit}>
       <label htmlFor={nameId}>
@@ -82,4 +82,7 @@ console.log(contact.name)
       <button type="submit">Add contact</button>
     </form>
   );
-}
+};
+Form.propTypes = {
+  handleSubmit: PropTypes.func,
+};

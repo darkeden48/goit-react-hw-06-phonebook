@@ -1,21 +1,20 @@
-import propTypes from "prop-types";
+import PropTypes from "prop-types";
 import c from "./Contacts.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import {addContact, removeContact,filterContact} from "../../redux/store"
+import { removeContact} from "../../redux/actions"
 
-function Contacts() {
+export default function Contacts() {
   const contacts = useSelector(state=>state.contacts.contacts);
   const filtered = useSelector(state=>state.filter);
   const dispatch = useDispatch();
-console.log(contacts)
-console.log(filtered)
+
   const filteredContacts = contacts.filter(contact =>
-    contact.name.includes(filtered.filter));
+    contact.name.toLowerCase().includes(filtered.filter));
      
-   
-  const deleteContact = (id) => {
+   const deleteContact = (id) => {
     dispatch(removeContact((id))); 
   };
+  
   return (
     <ul className={c.contacts_list}>
       {contacts.length > 0 &&filteredContacts.map(({ name, number, id }) => (
@@ -31,7 +30,12 @@ console.log(filtered)
   );
 }
 Contacts.propTypes = {
-  contacts: propTypes.array,
-  deleteContact: propTypes.func,
+  contacts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      nick: PropTypes.string,
+      number: PropTypes.string,
+    })
+  ),
+  DeleteContact: PropTypes.func,
 };
-export default Contacts;
